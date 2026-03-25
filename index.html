@@ -1,0 +1,449 @@
+
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:var(--font-sans,sans-serif);color:var(--color-text-primary);background:transparent}
+.lesson{max-width:680px;margin:0 auto;padding:1rem 0}
+.pill-nav{display:flex;gap:6px;flex-wrap:wrap;padding:0 0 1rem}
+.pill{padding:5px 14px;border-radius:20px;font-size:12px;font-weight:500;cursor:pointer;border:1px solid var(--color-border-tertiary);background:var(--color-background-secondary);color:var(--color-text-secondary);transition:all .15s}
+.pill.active{background:#E6F1FB;border-color:#378ADD;color:#0C447C}
+.panel{display:none}.panel.active{display:block}
+h2{font-size:18px;font-weight:500;margin-bottom:.5rem}
+h3{font-size:15px;font-weight:500;margin:1.2rem 0 .4rem}
+p,li{font-size:14px;line-height:1.7;color:var(--color-text-primary)}
+ul{padding-left:1.2rem;margin:.4rem 0}
+.card{background:var(--color-background-secondary);border:1px solid var(--color-border-tertiary);border-radius:10px;padding:1rem 1.2rem;margin:.8rem 0}
+.formula{background:var(--color-background-tertiary);border-left:3px solid #378ADD;border-radius:0 8px 8px 0;padding:.6rem 1rem;font-size:15px;font-weight:500;margin:.6rem 0;color:var(--color-text-primary)}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:.8rem 0}
+.mini-card{background:var(--color-background-secondary);border:1px solid var(--color-border-tertiary);border-radius:8px;padding:.7rem 1rem;text-align:center}
+.mini-card .val{font-size:20px;font-weight:500;color:#185FA5}
+.mini-card .lbl{font-size:12px;color:var(--color-text-secondary);margin-top:2px}
+.ex-box{border:1px solid var(--color-border-tertiary);border-radius:8px;overflow:hidden;margin:.8rem 0}
+.ex-head{background:#E6F1FB;padding:.6rem 1rem;font-size:13px;font-weight:500;color:#0C447C;display:flex;justify-content:space-between;align-items:center;cursor:pointer}
+.ex-body{padding:.8rem 1rem;font-size:13px;line-height:1.7;display:none}
+.ex-body.open{display:block}
+.step{padding:.3rem 0;border-top:1px solid var(--color-border-tertiary);margin-top:.4rem}
+.step:first-child{border-top:none;margin-top:0}
+.badge{display:inline-block;padding:2px 8px;border-radius:10px;font-size:11px;font-weight:500}
+.b-blue{background:#E6F1FB;color:#185FA5}
+.b-amber{background:#FAEEDA;color:#854F0B}
+.b-green{background:#EAF3DE;color:#3B6D11}
+.b-purple{background:#EEEDFE;color:#3C3489}
+.quiz-q{margin:.8rem 0;padding:.8rem 1rem;border:1px solid var(--color-border-tertiary);border-radius:8px}
+.quiz-q p{margin-bottom:.6rem;font-weight:500;font-size:14px}
+.quiz-opt{display:block;width:100%;text-align:left;padding:6px 10px;margin:4px 0;border:1px solid var(--color-border-tertiary);border-radius:6px;font-size:13px;cursor:pointer;background:var(--color-background-secondary);color:var(--color-text-primary);transition:all .15s}
+.quiz-opt:hover{border-color:var(--color-border-primary);background:var(--color-background-tertiary)}
+.quiz-opt.ok{border-color:#3B6D11;background:#EAF3DE;color:#27500A}
+.quiz-opt.fail{border-color:#A32D2D;background:#FCEBEB;color:#791F1F}
+.feedback{font-size:12px;padding:5px 8px;border-radius:4px;margin-top:4px;display:none}
+.feedback.show{display:block}
+.fb-ok{background:#EAF3DE;color:#27500A}
+.fb-fail{background:#FCEBEB;color:#791F1F}
+.btn{padding:7px 16px;border-radius:6px;font-size:13px;font-weight:500;cursor:pointer;border:none;background:#378ADD;color:#fff;margin-top:.6rem}
+.btn-s{background:var(--color-background-secondary);color:var(--color-text-primary);border:1px solid var(--color-border-tertiary)}
+.circ-container{display:flex;justify-content:center;margin:.8rem 0}
+canvas{border-radius:8px}
+.angle-info{display:flex;gap:8px;flex-wrap:wrap;margin:.6rem 0}
+.angle-chip{padding:4px 10px;border-radius:6px;font-size:12px;border:1px solid var(--color-border-tertiary);background:var(--color-background-secondary);cursor:pointer;transition:all .15s}
+.angle-chip:hover{background:#E6F1FB;border-color:#378ADD;color:#0C447C}
+.conv-tool{background:var(--color-background-secondary);border:1px solid var(--color-border-tertiary);border-radius:10px;padding:1rem;margin:.8rem 0}
+.conv-row{display:flex;align-items:center;gap:8px;margin:.5rem 0;flex-wrap:wrap}
+.conv-row label{font-size:13px;color:var(--color-text-secondary);min-width:80px}
+.conv-row input{width:100px;padding:5px 8px;border:1px solid var(--color-border-tertiary);border-radius:6px;font-size:14px;background:var(--color-background-primary);color:var(--color-text-primary)}
+.conv-row .result{font-size:15px;font-weight:500;color:#185FA5;min-width:100px}
+.sep{height:1px;background:var(--color-border-tertiary);margin:1rem 0}
+</style>
+
+<div class="lesson">
+<div class="pill-nav">
+  <div class="pill active" onclick="showPanel('intro')">Inicio</div>
+  <div class="pill" onclick="showPanel('angulos')">Ángulos y posición</div>
+  <div class="pill" onclick="showPanel('conversion')">Grados ↔ Radianes</div>
+  <div class="pill" onclick="showPanel('circ')">Circunferencia unitaria</div>
+  <div class="pill" onclick="showPanel('arco')">Longitud de arco</div>
+  <div class="pill" onclick="showPanel('quiz')">Práctica</div>
+</div>
+
+<!-- INICIO -->
+<div id="panel-intro" class="panel active">
+  <h2>Clase 1 — Ángulos y medición</h2>
+  <p style="color:var(--color-text-secondary);font-size:13px;margin-bottom:1rem">Repaso diagnóstico · Trigonometría preparatoria</p>
+  <div class="card">
+    <h3 style="margin-top:0">¿Qué aprenderás hoy?</h3>
+    <ul>
+      <li>Definir un ángulo en posición estándar y sus partes</li>
+      <li>Identificar el cuadrante de un ángulo</li>
+      <li>Calcular el ángulo de referencia</li>
+      <li>Convertir entre grados y radianes</li>
+      <li>Aplicar la fórmula de longitud de arco: <strong>s = r · θ</strong></li>
+    </ul>
+  </div>
+  <div class="grid2">
+    <div class="mini-card"><div class="val">5</div><div class="lbl">Temas</div></div>
+    <div class="mini-card"><div class="val">~50 min</div><div class="lbl">Duración estimada</div></div>
+  </div>
+  <p style="font-size:13px;color:var(--color-text-secondary);margin-top:.8rem">Navega por las secciones usando las pestañas de arriba. Cada sección incluye teoría, ejemplos resueltos y práctica inmediata.</p>
+</div>
+
+<!-- ÁNGULOS Y POSICIÓN -->
+<div id="panel-angulos" class="panel">
+  <h2>Ángulos en posición estándar</h2>
+  <p>Un ángulo en <strong>posición estándar</strong> tiene su vértice en el origen y su lado inicial sobre el eje positivo de las <em>x</em>.</p>
+  <div class="formula">Ángulo positivo → rotación antihoraria &nbsp;|&nbsp; Ángulo negativo → rotación horaria</div>
+  <h3>Los cuatro cuadrantes</h3>
+  <div class="grid2">
+    <div class="mini-card"><div class="val" style="color:#185FA5">Q I</div><div class="lbl">0° – 90°</div></div>
+    <div class="mini-card"><div class="val" style="color:#854F0B">Q II</div><div class="lbl">90° – 180°</div></div>
+    <div class="mini-card"><div class="val" style="color:#993C1D">Q III</div><div class="lbl">180° – 270°</div></div>
+    <div class="mini-card"><div class="val" style="color:#3B6D11">Q IV</div><div class="lbl">270° – 360°</div></div>
+  </div>
+  <h3>Ángulo de referencia</h3>
+  <p>El <strong>ángulo de referencia</strong> (α) es el ángulo agudo (entre 0° y 90°) formado entre el lado terminal y el eje <em>x</em>.</p>
+  <div class="card">
+    <div class="step"><span class="badge b-blue">Q I</span> α = θ</div>
+    <div class="step"><span class="badge b-amber">Q II</span> α = 180° − θ</div>
+    <div class="step"><span class="badge b-purple">Q III</span> α = θ − 180°</div>
+    <div class="step"><span class="badge b-green">Q IV</span> α = 360° − θ</div>
+  </div>
+  <div class="ex-box">
+    <div class="ex-head" onclick="toggleEx(this)">Ejemplo 1 — Encuentra el ángulo de referencia de 310° <span>▼</span></div>
+    <div class="ex-body">
+      <div class="step">310° está en el cuadrante IV (entre 270° y 360°).</div>
+      <div class="step">α = 360° − 310° = <strong>50°</strong></div>
+    </div>
+  </div>
+  <div class="ex-box">
+    <div class="ex-head" onclick="toggleEx(this)">Ejemplo 2 — Ángulo de referencia de 225° <span>▼</span></div>
+    <div class="ex-body">
+      <div class="step">225° está en el cuadrante III (entre 180° y 270°).</div>
+      <div class="step">α = 225° − 180° = <strong>45°</strong></div>
+    </div>
+  </div>
+  <h3>Ángulos coterminales</h3>
+  <p>Dos ángulos son <strong>coterminales</strong> si tienen el mismo lado terminal. Se obtienen sumando o restando múltiplos de 360°.</p>
+  <div class="formula">θ_coterminal = θ ± 360° · n &nbsp; (n ∈ ℤ)</div>
+</div>
+
+<!-- CONVERSIÓN -->
+<div id="panel-conversion" class="panel">
+  <h2>Grados y radianes</h2>
+  <p>Existen dos unidades para medir ángulos. La vuelta completa equivale a 360° o 2π rad.</p>
+  <div class="grid2" style="margin:.8rem 0">
+    <div class="formula" style="text-align:center">Grados → Rad<br>θ<sub>rad</sub> = θ° × π/180</div>
+    <div class="formula" style="text-align:center">Rad → Grados<br>θ° = θ<sub>rad</sub> × 180/π</div>
+  </div>
+  <h3>Ángulos especiales</h3>
+  <div style="overflow-x:auto">
+  <table style="width:100%;border-collapse:collapse;font-size:13px;margin:.6rem 0">
+    <thead><tr style="background:var(--color-background-secondary)">
+      <th style="padding:7px 10px;text-align:left;border-bottom:1px solid var(--color-border-tertiary)">Grados</th>
+      <th style="padding:7px 10px;text-align:center;border-bottom:1px solid var(--color-border-tertiary)">Radianes</th>
+      <th style="padding:7px 10px;text-align:center;border-bottom:1px solid var(--color-border-tertiary)">Fracción de vuelta</th>
+    </tr></thead>
+    <tbody>
+      <tr><td style="padding:6px 10px;border-bottom:1px solid var(--color-border-tertiary)">30°</td><td style="padding:6px 10px;text-align:center;border-bottom:1px solid var(--color-border-tertiary)">π/6</td><td style="padding:6px 10px;text-align:center;border-bottom:1px solid var(--color-border-tertiary)">1/12</td></tr>
+      <tr style="background:var(--color-background-secondary)"><td style="padding:6px 10px;border-bottom:1px solid var(--color-border-tertiary)">45°</td><td style="padding:6px 10px;text-align:center;border-bottom:1px solid var(--color-border-tertiary)">π/4</td><td style="padding:6px 10px;text-align:center;border-bottom:1px solid var(--color-border-tertiary)">1/8</td></tr>
+      <tr><td style="padding:6px 10px;border-bottom:1px solid var(--color-border-tertiary)">60°</td><td style="padding:6px 10px;text-align:center;border-bottom:1px solid var(--color-border-tertiary)">π/3</td><td style="padding:6px 10px;text-align:center;border-bottom:1px solid var(--color-border-tertiary)">1/6</td></tr>
+      <tr style="background:var(--color-background-secondary)"><td style="padding:6px 10px;border-bottom:1px solid var(--color-border-tertiary)">90°</td><td style="padding:6px 10px;text-align:center;border-bottom:1px solid var(--color-border-tertiary)">π/2</td><td style="padding:6px 10px;text-align:center;border-bottom:1px solid var(--color-border-tertiary)">1/4</td></tr>
+      <tr><td style="padding:6px 10px;border-bottom:1px solid var(--color-border-tertiary)">120°</td><td style="padding:6px 10px;text-align:center;border-bottom:1px solid var(--color-border-tertiary)">2π/3</td><td style="padding:6px 10px;text-align:center;border-bottom:1px solid var(--color-border-tertiary)">1/3</td></tr>
+      <tr style="background:var(--color-background-secondary)"><td style="padding:6px 10px;border-bottom:1px solid var(--color-border-tertiary)">180°</td><td style="padding:6px 10px;text-align:center;border-bottom:1px solid var(--color-border-tertiary)">π</td><td style="padding:6px 10px;text-align:center;border-bottom:1px solid var(--color-border-tertiary)">1/2</td></tr>
+      <tr><td style="padding:6px 10px;border-bottom:1px solid var(--color-border-tertiary)">270°</td><td style="padding:6px 10px;text-align:center;border-bottom:1px solid var(--color-border-tertiary)">3π/2</td><td style="padding:6px 10px;text-align:center;border-bottom:1px solid var(--color-border-tertiary)">3/4</td></tr>
+      <tr style="background:var(--color-background-secondary)"><td style="padding:6px 10px">360°</td><td style="padding:6px 10px;text-align:center">2π</td><td style="padding:6px 10px;text-align:center">1</td></tr>
+    </tbody>
+  </table>
+  </div>
+  <h3>Convertidor interactivo</h3>
+  <div class="conv-tool">
+    <div class="conv-row">
+      <label>Grados:</label>
+      <input type="number" id="inp-deg" value="90" oninput="convertDeg()">
+      <span style="font-size:13px;color:var(--color-text-secondary)">→</span>
+      <span class="result" id="out-rad">π/2 rad</span>
+    </div>
+    <div class="conv-row">
+      <label>Radianes:</label>
+      <input type="number" id="inp-rad" value="1.5708" step="0.001" oninput="convertRad()">
+      <span style="font-size:13px;color:var(--color-text-secondary)">→</span>
+      <span class="result" id="out-deg">90.0°</span>
+    </div>
+  </div>
+</div>
+
+<!-- CIRCUNFERENCIA UNITARIA -->
+<div id="panel-circ" class="panel">
+  <h2>Circunferencia unitaria</h2>
+  <p>La circunferencia unitaria tiene radio 1 centrada en el origen. Cualquier punto sobre ella es <strong>(cos θ, sen θ)</strong>.</p>
+  <div class="circ-container"><canvas id="unitCircle" width="320" height="320"></canvas></div>
+  <p style="font-size:12px;text-align:center;color:var(--color-text-secondary);margin-top:.4rem">Haz clic en un ángulo para verlo en la circunferencia</p>
+  <div class="angle-info">
+    <div class="angle-chip" onclick="drawAngle(0)">0° (0)</div>
+    <div class="angle-chip" onclick="drawAngle(30)">30° (π/6)</div>
+    <div class="angle-chip" onclick="drawAngle(45)">45° (π/4)</div>
+    <div class="angle-chip" onclick="drawAngle(60)">60° (π/3)</div>
+    <div class="angle-chip" onclick="drawAngle(90)">90° (π/2)</div>
+    <div class="angle-chip" onclick="drawAngle(120)">120° (2π/3)</div>
+    <div class="angle-chip" onclick="drawAngle(135)">135° (3π/4)</div>
+    <div class="angle-chip" onclick="drawAngle(150)">150° (5π/6)</div>
+    <div class="angle-chip" onclick="drawAngle(180)">180° (π)</div>
+    <div class="angle-chip" onclick="drawAngle(210)">210° (7π/6)</div>
+    <div class="angle-chip" onclick="drawAngle(225)">225° (5π/4)</div>
+    <div class="angle-chip" onclick="drawAngle(240)">240° (4π/3)</div>
+    <div class="angle-chip" onclick="drawAngle(270)">270° (3π/2)</div>
+    <div class="angle-chip" onclick="drawAngle(300)">300° (5π/3)</div>
+    <div class="angle-chip" onclick="drawAngle(315)">315° (7π/4)</div>
+    <div class="angle-chip" onclick="drawAngle(330)">330° (11π/6)</div>
+  </div>
+  <div id="circ-info" class="card" style="margin-top:.8rem;font-size:13px">
+    Selecciona un ángulo para ver sus coordenadas
+  </div>
+</div>
+
+<!-- LONGITUD DE ARCO -->
+<div id="panel-arco" class="panel">
+  <h2>Longitud de arco</h2>
+  <p>Cuando el ángulo central θ está en <strong>radianes</strong>, la longitud del arco es:</p>
+  <div class="formula" style="font-size:18px;text-align:center">s = r · θ</div>
+  <div class="card">
+    <div class="step"><span class="badge b-blue">s</span> — longitud del arco (misma unidad que r)</div>
+    <div class="step"><span class="badge b-blue">r</span> — radio de la circunferencia</div>
+    <div class="step"><span class="badge b-blue">θ</span> — ángulo central en radianes</div>
+  </div>
+  <div class="ex-box">
+    <div class="ex-head" onclick="toggleEx(this)">Ejemplo 1 — r = 8 cm, θ = 3π/4 rad <span>▼</span></div>
+    <div class="ex-body">
+      <div class="step">Verificar que θ está en radianes: ✓ (3π/4 rad)</div>
+      <div class="step">s = 8 × (3π/4) = 6π ≈ <strong>18.85 cm</strong></div>
+    </div>
+  </div>
+  <div class="ex-box">
+    <div class="ex-head" onclick="toggleEx(this)">Ejemplo 2 — r = 5 m, θ = 60° (convertir primero) <span>▼</span></div>
+    <div class="ex-body">
+      <div class="step">Convertir: 60° × (π/180) = π/3 rad</div>
+      <div class="step">s = 5 × (π/3) = 5π/3 ≈ <strong>5.24 m</strong></div>
+    </div>
+  </div>
+  <h3>Calculadora de arco</h3>
+  <div class="conv-tool">
+    <div class="conv-row">
+      <label>Radio r:</label>
+      <input type="number" id="arc-r" value="10" step="0.1" oninput="calcArc()">
+      <span style="font-size:13px">unidades</span>
+    </div>
+    <div class="conv-row">
+      <label>Ángulo θ:</label>
+      <input type="number" id="arc-t" value="90" step="1" oninput="calcArc()">
+      <select id="arc-unit" onchange="calcArc()" style="padding:5px 8px;border:1px solid var(--color-border-tertiary);border-radius:6px;background:var(--color-background-primary);color:var(--color-text-primary);font-size:13px">
+        <option value="deg">grados</option>
+        <option value="rad">radianes</option>
+      </select>
+    </div>
+    <div class="conv-row">
+      <label>Arco s:</label>
+      <span class="result" id="arc-result">15.71 u</span>
+    </div>
+  </div>
+</div>
+
+<!-- QUIZ -->
+<div id="panel-quiz" class="panel">
+  <h2>Práctica rápida</h2>
+  <p style="font-size:13px;color:var(--color-text-secondary);margin-bottom:1rem">4 preguntas sobre los temas de esta clase. Selecciona tu respuesta.</p>
+
+  <div class="quiz-q" id="qq1">
+    <p>1. ¿En qué cuadrante se encuentra un ángulo de 155°?</p>
+    <button class="quiz-opt" onclick="checkQ('qq1',this,'fail')">Cuadrante I</button>
+    <button class="quiz-opt" onclick="checkQ('qq1',this,'ok')">Cuadrante II</button>
+    <button class="quiz-opt" onclick="checkQ('qq1',this,'fail')">Cuadrante III</button>
+    <button class="quiz-opt" onclick="checkQ('qq1',this,'fail')">Cuadrante IV</button>
+    <div class="feedback fb-ok" id="fb-ok-qq1">Correcto. 155° está entre 90° y 180°, por lo tanto en el cuadrante II.</div>
+    <div class="feedback fb-fail" id="fb-fail-qq1">No es correcto. 155° está entre 90° y 180° → cuadrante II.</div>
+  </div>
+
+  <div class="quiz-q" id="qq2">
+    <p>2. ¿Cuántos radianes equivalen a 120°?</p>
+    <button class="quiz-opt" onclick="checkQ('qq2',this,'fail')">π/3</button>
+    <button class="quiz-opt" onclick="checkQ('qq2',this,'ok')">2π/3</button>
+    <button class="quiz-opt" onclick="checkQ('qq2',this,'fail')">3π/4</button>
+    <button class="quiz-opt" onclick="checkQ('qq2',this,'fail')">π/2</button>
+    <div class="feedback fb-ok" id="fb-ok-qq2">Correcto. 120° × (π/180) = 2π/3 rad.</div>
+    <div class="feedback fb-fail" id="fb-fail-qq2">Recuerda: multiplica por π/180. → 120 × π/180 = 2π/3.</div>
+  </div>
+
+  <div class="quiz-q" id="qq3">
+    <p>3. El ángulo de referencia de 330° es:</p>
+    <button class="quiz-opt" onclick="checkQ('qq3',this,'fail')">60°</button>
+    <button class="quiz-opt" onclick="checkQ('qq3',this,'fail')">150°</button>
+    <button class="quiz-opt" onclick="checkQ('qq3',this,'ok')">30°</button>
+    <button class="quiz-opt" onclick="checkQ('qq3',this,'fail')">45°</button>
+    <div class="feedback fb-ok" id="fb-ok-qq3">Correcto. 330° está en QIV: α = 360° − 330° = 30°.</div>
+    <div class="feedback fb-fail" id="fb-fail-qq3">330° está en el cuadrante IV → α = 360° − 330° = 30°.</div>
+  </div>
+
+  <div class="quiz-q" id="qq4">
+    <p>4. Un arco con radio 6 cm y ángulo central π/3 rad mide:</p>
+    <button class="quiz-opt" onclick="checkQ('qq4',this,'fail')">3π cm</button>
+    <button class="quiz-opt" onclick="checkQ('qq4',this,'ok')">2π cm</button>
+    <button class="quiz-opt" onclick="checkQ('qq4',this,'fail')">π cm</button>
+    <button class="quiz-opt" onclick="checkQ('qq4',this,'fail')">6π cm</button>
+    <div class="feedback fb-ok" id="fb-ok-qq4">Correcto. s = r·θ = 6 × (π/3) = 2π ≈ 6.28 cm.</div>
+    <div class="feedback fb-fail" id="fb-fail-qq4">Usa s = r·θ: s = 6 × (π/3) = 6π/3 = 2π cm.</div>
+  </div>
+
+  <div id="quiz-score" style="display:none;margin-top:1rem;padding:1rem;background:var(--color-background-secondary);border-radius:8px;border:1px solid var(--color-border-tertiary)">
+    <div style="font-size:24px;font-weight:500;color:#185FA5" id="score-num"></div>
+    <div style="font-size:13px;color:var(--color-text-secondary);margin-top:4px" id="score-msg"></div>
+  </div>
+  <button class="btn" onclick="scoreQuiz()" style="margin-top:.8rem">Ver resultado</button>
+</div>
+</div>
+
+<script>
+function showPanel(id) {
+  document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.pill').forEach(p => p.classList.remove('active'));
+  document.getElementById('panel-'+id).classList.add('active');
+  const pills = document.querySelectorAll('.pill');
+  const map = {intro:0,angulos:1,conversion:2,circ:3,arco:4,quiz:5};
+  pills[map[id]].classList.add('active');
+  if(id==='circ') setTimeout(()=>drawAngle(45),50);
+}
+
+function toggleEx(el) {
+  const body = el.nextElementSibling;
+  const open = body.classList.toggle('open');
+  el.querySelector('span').textContent = open ? '▲' : '▼';
+}
+
+function convertDeg() {
+  const d = parseFloat(document.getElementById('inp-deg').value)||0;
+  const r = d * Math.PI / 180;
+  const frac = degToFrac(d);
+  document.getElementById('out-rad').textContent = frac ? frac+' rad' : r.toFixed(4)+' rad';
+  document.getElementById('inp-rad').value = r.toFixed(4);
+}
+
+function convertRad() {
+  const r = parseFloat(document.getElementById('inp-rad').value)||0;
+  const d = r * 180 / Math.PI;
+  document.getElementById('out-deg').textContent = d.toFixed(1)+'°';
+  document.getElementById('inp-deg').value = Math.round(d*100)/100;
+}
+
+function degToFrac(d) {
+  const map = {0:'0',30:'π/6',45:'π/4',60:'π/3',90:'π/2',120:'2π/3',135:'3π/4',150:'5π/6',180:'π',210:'7π/6',225:'5π/4',240:'4π/3',270:'3π/2',300:'5π/3',315:'7π/4',330:'11π/6',360:'2π'};
+  return map[d]||null;
+}
+
+const specialAngles = {
+  0:  {cos:'1',sen:'0'},
+  30: {cos:'√3/2',sen:'1/2'},
+  45: {cos:'√2/2',sen:'√2/2'},
+  60: {cos:'1/2',sen:'√3/2'},
+  90: {cos:'0',sen:'1'},
+  120:{cos:'−1/2',sen:'√3/2'},
+  135:{cos:'−√2/2',sen:'√2/2'},
+  150:{cos:'−√3/2',sen:'1/2'},
+  180:{cos:'−1',sen:'0'},
+  210:{cos:'−√3/2',sen:'−1/2'},
+  225:{cos:'−√2/2',sen:'−√2/2'},
+  240:{cos:'−1/2',sen:'−√3/2'},
+  270:{cos:'0',sen:'−1'},
+  300:{cos:'1/2',sen:'−√3/2'},
+  315:{cos:'√2/2',sen:'−√2/2'},
+  330:{cos:'√3/2',sen:'−1/2'},
+};
+
+function drawAngle(deg) {
+  const canvas = document.getElementById('unitCircle');
+  if(!canvas) return;
+  const ctx = canvas.getContext('2d');
+  const cx=160,cy=160,r=120;
+  const isDark = matchMedia('(prefers-color-scheme: dark)').matches;
+  const bg = isDark ? '#1a1a1a' : '#f8f7f4';
+  const axis = isDark ? '#555' : '#ccc';
+  const txt = isDark ? '#aaa' : '#888';
+  const main = isDark ? '#ddd' : '#333';
+  ctx.clearRect(0,0,320,320);
+  ctx.fillStyle = bg;
+  ctx.fillRect(0,0,320,320);
+  ctx.strokeStyle = axis; ctx.lineWidth=1;
+  ctx.beginPath();ctx.moveTo(20,cy);ctx.lineTo(300,cy);ctx.stroke();
+  ctx.beginPath();ctx.moveTo(cx,20);ctx.lineTo(cx,300);ctx.stroke();
+  for(let i=0;i<360;i+=30){
+    const a=-i*Math.PI/180;
+    const x=cx+r*Math.cos(a),y=cy+r*Math.sin(a);
+    ctx.beginPath();ctx.arc(x,y,2,0,Math.PI*2);
+    ctx.fillStyle=axis;ctx.fill();
+  }
+  ctx.strokeStyle=isDark?'#444':'#ddd'; ctx.lineWidth=0.5;
+  ctx.beginPath();ctx.arc(cx,cy,r,0,Math.PI*2);ctx.stroke();
+  const rad = -deg*Math.PI/180;
+  const px=cx+r*Math.cos(rad), py=cy+r*Math.sin(rad);
+  ctx.strokeStyle='#378ADD'; ctx.lineWidth=2;
+  ctx.beginPath();ctx.moveTo(cx,cy);ctx.lineTo(px,py);ctx.stroke();
+  const arcR=32;
+  ctx.strokeStyle='#EF9F27'; ctx.lineWidth=1.5;
+  ctx.beginPath();ctx.arc(cx,cy,arcR,0,rad,deg>180);ctx.stroke();
+  ctx.beginPath();ctx.arc(px,py,6,0,Math.PI*2);
+  ctx.fillStyle='#378ADD';ctx.fill();
+  const lx=cx+(r+18)*Math.cos(rad), ly=cy+(r+18)*Math.sin(rad);
+  const sp=specialAngles[deg];
+  if(sp){
+    ctx.fillStyle=main; ctx.font='11px sans-serif'; ctx.textAlign='center'; ctx.textBaseline='middle';
+    ctx.fillText('('+sp.cos+', '+sp.sen+')',lx,ly);
+  }
+  ctx.fillStyle='#EF9F27'; ctx.font='500 13px sans-serif'; ctx.textAlign='left'; ctx.textBaseline='top';
+  ctx.fillText(deg+'°',cx+arcR+6,cy-18);
+  const frac=degToFrac(deg);
+  if(frac){ctx.fillStyle=txt;ctx.font='11px sans-serif';ctx.fillText(frac,cx+arcR+6,cy-5);}
+  let quad='';
+  if(deg>0&&deg<90)quad='Q I';
+  else if(deg>90&&deg<180)quad='Q II';
+  else if(deg>180&&deg<270)quad='Q III';
+  else if(deg>270&&deg<360)quad='Q IV';
+  const info=document.getElementById('circ-info');
+  if(info&&sp){
+    info.innerHTML=`<strong>${deg}° (${frac||deg+' rad'})</strong><br>cos ${deg}° = ${sp.cos} &nbsp;|&nbsp; sen ${deg}° = ${sp.sen}${quad?' &nbsp;|&nbsp; '+quad:''}`;
+  }
+}
+
+function calcArc(){
+  const r=parseFloat(document.getElementById('arc-r').value)||0;
+  const t=parseFloat(document.getElementById('arc-t').value)||0;
+  const unit=document.getElementById('arc-unit').value;
+  const tRad = unit==='deg' ? t*Math.PI/180 : t;
+  const s=r*tRad;
+  document.getElementById('arc-result').textContent=s.toFixed(3)+' u';
+}
+
+function checkQ(qid,btn,verdict) {
+  const q=document.getElementById(qid);
+  if(q.dataset.done) return;
+  q.dataset.done='1';
+  q.querySelectorAll('.quiz-opt').forEach(b=>b.disabled=true);
+  btn.classList.add(verdict);
+  const okFb=document.getElementById('fb-ok-'+qid);
+  const failFb=document.getElementById('fb-fail-'+qid);
+  if(verdict==='ok'){okFb.classList.add('show');}
+  else{failFb.classList.add('show');}
+}
+
+function scoreQuiz(){
+  const qs=['qq1','qq2','qq3','qq4'];
+  let score=0;
+  qs.forEach(q=>{
+    const el=document.getElementById(q);
+    if(el.querySelector('.quiz-opt.ok')) score++;
+  });
+  const box=document.getElementById('quiz-score');
+  box.style.display='block';
+  document.getElementById('score-num').textContent=score+'/4';
+  const msgs=['Repasa los temas de esta clase antes de continuar.','Buen inicio, refuerza los temas con más ejercicios.','Muy bien, dominas la mayor parte del tema.','Excelente dominio del tema.'];
+  document.getElementById('score-msg').textContent=msgs[score]||'';
+}
+
+setTimeout(()=>{
+  convertDeg();
+  calcArc();
+  drawAngle(45);
+},100);
+</script>
